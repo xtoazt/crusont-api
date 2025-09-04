@@ -1,19 +1,23 @@
+"""
+Single-file FastAPI application for Vercel deployment
+This consolidates everything into one file to minimize serverless functions
+"""
 import traceback
-from fastapi import (
-    APIRouter,
-    Request,
-    Response,
-    UploadFile,
-    File,
-    Form,
-    HTTPException,
-    Path
-)
-from typing import Union, Dict, Any
+import time
+from fastapi import FastAPI, Request, Response, UploadFile, File, Form, HTTPException, Path
+from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Union, Dict, Any, Optional
 from pydantic import BaseModel
-from ....responses import PrettyJSONResponse, StreamingResponse
-from ...constants import DEPENDENCIES
-from ....models import (
+import sys
+import os
+
+# Add the app directory to the Python path
+sys.path.insert(0, os.path.dirname(__file__))
+
+from app.responses import PrettyJSONResponse
+from app.api.constants import DEPENDENCIES
+from app.models import (
     ChatRequest, 
     EmbeddingsRequest, 
     ModerationRequest,
@@ -21,12 +25,11 @@ from ....models import (
     ImageRequest,
     TextTranslationsRequest
 )
-from ....core import ProviderManager
-from ....providers import Model, BaseProvider
-from ...exceptions import InsufficientCreditsError, NoProviderAvailableError
-from ....utils import RequestProcessor
-
-router = APIRouter()
+from app.core import ProviderManager
+from app.providers import Model, BaseProvider
+from app.api.exceptions import InsufficientCreditsError, NoProviderAvailableError
+from app.utils import RequestProcessor
+from app.api.dependencies import authentication, user_access, request_validation
 
 # Request models for API key management
 class CreateApiKeyRequest(BaseModel):
@@ -42,7 +45,23 @@ class ApiKeyResponse(BaseModel):
     created_at: float
     last_used: float = None
 
-# Unified handler classes
+# Create FastAPI app
+app = FastAPI(
+    title="Crusont API",
+    description="Completely free and open multi-provider AI gateway",
+    version="1.0.0"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Unified handler class
 class UnifiedHandler:
     provider_manager = ProviderManager()
     request_processor = RequestProcessor()
@@ -80,8 +99,38 @@ class UnifiedHandler:
             for message in messages
         )
 
+# Root endpoint
+@app.get('/', response_class=PrettyJSONResponse)
+async def home() -> Dict[str, Any]:
+    return {
+        'message': 'Welcome to the Crusont API! Fully free and open AI gateway.',
+        'version': '1.0.0',
+        'status': 'Free and Open',
+        'features': [
+            'Multi-provider AI access',
+            'Multiple API keys per user',
+            'No rate limits or restrictions',
+            'All models free and accessible',
+            'No IP locks or premium tiers',
+            'Chat completions, embeddings, moderation',
+            'Audio and image processing',
+            'Text translation services'
+        ],
+        'documentation': 'https://docs.crusont.com',
+        'github': 'https://github.com/crusont/api'
+    }
+
+# Models endpoint
+@app.get('/v1/models', response_class=PrettyJSONResponse)
+async def models() -> Dict[str, Any]:
+    return {
+        'an_easier_overview_available_here': 'https://docs.crusont.com/models',
+        'object': 'list',
+        'data': Model.all_to_json()
+    }
+
 # Chat Completions
-@router.post('/chat/completions', dependencies=DEPENDENCIES, response_model=None)
+@app.post('/v1/chat/completions', dependencies=DEPENDENCIES, response_model=None)
 async def chat_completions(
     request: Request,
     data: ChatRequest
@@ -137,7 +186,7 @@ async def chat_completions(
         raise HTTPException(status_code=500, detail=traceback.format_exc())
 
 # Embeddings
-@router.post('/embeddings', dependencies=DEPENDENCIES, response_model=None)
+@app.post('/v1/embeddings', dependencies=DEPENDENCIES, response_model=None)
 async def embeddings(
     request: Request,
     data: EmbeddingsRequest
@@ -164,7 +213,7 @@ async def embeddings(
         raise HTTPException(status_code=500, detail=traceback.format_exc())
 
 # Moderations
-@router.post('/moderations', dependencies=DEPENDENCIES, response_model=None)
+@app.post('/v1/moderations', dependencies=DEPENDENCIES, response_model=None)
 async def moderations(
     request: Request,
     data: ModerationRequest
@@ -191,7 +240,7 @@ async def moderations(
         raise HTTPException(status_code=500, detail=traceback.format_exc())
 
 # Audio Speech
-@router.post('/audio/speech', dependencies=DEPENDENCIES, response_model=None)
+@app.post('/v1/audio/speech', dependencies=DEPENDENCIES, response_model=None)
 async def audio_speech(
     request: Request,
     data: SpeechRequest
@@ -218,7 +267,7 @@ async def audio_speech(
         raise HTTPException(status_code=500, detail=traceback.format_exc())
 
 # Audio Transcriptions
-@router.post('/audio/transcriptions', dependencies=DEPENDENCIES, response_model=None)
+@app.post('/v1/audio/transcriptions', dependencies=DEPENDENCIES, response_model=None)
 async def audio_transcriptions(
     request: Request,
     file: UploadFile = File(...),
@@ -255,7 +304,7 @@ async def audio_transcriptions(
         raise HTTPException(status_code=500, detail=traceback.format_exc())
 
 # Audio Translations
-@router.post('/audio/translations', dependencies=DEPENDENCIES, response_model=None)
+@app.post('/v1/audio/translations', dependencies=DEPENDENCIES, response_model=None)
 async def audio_translations(
     request: Request,
     file: UploadFile = File(...),
@@ -290,7 +339,7 @@ async def audio_translations(
         raise HTTPException(status_code=500, detail=traceback.format_exc())
 
 # Image Generations
-@router.post('/images/generations', dependencies=DEPENDENCIES, response_model=None)
+@app.post('/v1/images/generations', dependencies=DEPENDENCIES, response_model=None)
 async def images_generations(
     request: Request,
     data: ImageRequest
@@ -317,7 +366,7 @@ async def images_generations(
         raise HTTPException(status_code=500, detail=traceback.format_exc())
 
 # Image Upscale
-@router.post('/images/upscale', dependencies=DEPENDENCIES, response_model=None)
+@app.post('/v1/images/upscale', dependencies=DEPENDENCIES, response_model=None)
 async def images_upscale(
     request: Request,
     file: UploadFile = File(...),
@@ -354,7 +403,7 @@ async def images_upscale(
         raise HTTPException(status_code=500, detail=traceback.format_exc())
 
 # Text Translations
-@router.post('/text/translations', dependencies=DEPENDENCIES, response_model=None)
+@app.post('/v1/text/translations', dependencies=DEPENDENCIES, response_model=None)
 async def text_translations(
     request: Request,
     data: TextTranslationsRequest
@@ -380,20 +429,11 @@ async def text_translations(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=traceback.format_exc())
 
-# Models endpoint
-@router.get('/models', response_class=PrettyJSONResponse)
-async def models() -> Dict[str, Any]:
-    return {
-        'an_easier_overview_available_here': 'https://docs.crusont.com/models',
-        'object': 'list',
-        'data': Model.all_to_json()
-    }
-
 # API Key Management
-@router.get('/keys', dependencies=DEPENDENCIES)
+@app.get('/v1/keys', dependencies=DEPENDENCIES)
 async def get_api_keys(request: Request) -> Dict[str, Any]:
     try:
-        from ....core.db.managers.user_manager import UserManager
+        from app.core.db.managers.user_manager import UserManager
         user_manager = UserManager()
         
         user_id = request.state.user['user_id']
@@ -416,13 +456,13 @@ async def get_api_keys(request: Request) -> Dict[str, Any]:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to retrieve API keys: {str(e)}")
 
-@router.post('/keys', dependencies=DEPENDENCIES)
+@app.post('/v1/keys', dependencies=DEPENDENCIES)
 async def create_api_key(
     request: Request,
     data: CreateApiKeyRequest
 ) -> ApiKeyResponse:
     try:
-        from ....core.db.managers.user_manager import UserManager
+        from app.core.db.managers.user_manager import UserManager
         user_manager = UserManager()
         
         user_id = request.state.user['user_id']
@@ -438,13 +478,13 @@ async def create_api_key(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create API key: {str(e)}")
 
-@router.delete('/keys/{key_id}', dependencies=DEPENDENCIES)
+@app.delete('/v1/keys/{key_id}', dependencies=DEPENDENCIES)
 async def delete_api_key(
     request: Request,
     key_id: str = Path(...)
 ) -> Dict[str, Any]:
     try:
-        from ....core.db.managers.user_manager import UserManager
+        from app.core.db.managers.user_manager import UserManager
         user_manager = UserManager()
         
         user_id = request.state.user['user_id']
@@ -462,3 +502,18 @@ async def delete_api_key(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete API key: {str(e)}")
+
+# API routes (for backward compatibility)
+@app.get('/api/', response_class=PrettyJSONResponse)
+async def api_home() -> Dict[str, Any]:
+    return await home()
+
+@app.get('/api/v1/models', response_class=PrettyJSONResponse)
+async def api_models() -> Dict[str, Any]:
+    return await models()
+
+# Redirect all /api/v1/* to /v1/*
+@app.api_route('/api/v1/{path:path}', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'])
+async def api_redirect(request: Request, path: str):
+    # This will be handled by the main /v1/* routes above
+    pass
