@@ -138,8 +138,90 @@ async def api_home() -> Dict[str, Any]:
 async def api_models() -> Dict[str, Any]:
     return await models()
 
-# Static files (favicon.ico, robots.txt, sitemap.xml, manifest.json, styles.css, script.js) 
-# are now served by Vercel's static build from the frontend directory
+# Serve frontend files
+@app.get('/index.html')
+async def serve_index():
+    from fastapi.responses import Response
+    import os
+    
+    # Read the frontend index.html file
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'frontend', 'index.html')
+    try:
+        with open(frontend_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return Response(
+            content=content,
+            media_type="text/html",
+            headers={"Cache-Control": "public, max-age=3600"}
+        )
+    except FileNotFoundError:
+        return Response(
+            content="<h1>Frontend not found</h1>",
+            media_type="text/html"
+        )
+
+@app.get('/styles.css')
+async def serve_styles():
+    from fastapi.responses import Response
+    import os
+    
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'frontend', 'styles.css')
+    try:
+        with open(frontend_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return Response(
+            content=content,
+            media_type="text/css",
+            headers={"Cache-Control": "public, max-age=3600"}
+        )
+    except FileNotFoundError:
+        return Response(
+            content="/* CSS not found */",
+            media_type="text/css"
+        )
+
+@app.get('/script.js')
+async def serve_script():
+    from fastapi.responses import Response
+    import os
+    
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'frontend', 'script.js')
+    try:
+        with open(frontend_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return Response(
+            content=content,
+            media_type="application/javascript",
+            headers={"Cache-Control": "public, max-age=3600"}
+        )
+    except FileNotFoundError:
+        return Response(
+            content="// JS not found",
+            media_type="application/javascript"
+        )
+
+@app.get('/favicon.ico')
+async def serve_favicon():
+    from fastapi.responses import Response
+    import os
+    
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'frontend', 'favicon.ico')
+    try:
+        with open(frontend_path, 'rb') as f:
+            content = f.read()
+        return Response(
+            content=content,
+            media_type="image/x-icon",
+            headers={"Cache-Control": "public, max-age=31536000"}
+        )
+    except FileNotFoundError:
+        # Return a simple 1x1 transparent PNG
+        import base64
+        png_data = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==")
+        return Response(
+            content=png_data,
+            media_type="image/x-icon"
+        )
 
 # Add health check endpoint
 @app.get('/health')
