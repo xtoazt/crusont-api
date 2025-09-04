@@ -142,17 +142,34 @@ async def api_models() -> Dict[str, Any]:
 @app.get('/favicon.ico')
 async def favicon(request: Request):
     print(f"Favicon requested: {request.url}")
-    return {"message": "No favicon available"}
+    # Return a simple 1x1 transparent PNG as favicon
+    from fastapi.responses import Response
+    import base64
+    
+    # Simple 1x1 transparent PNG
+    png_data = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==")
+    
+    return Response(
+        content=png_data,
+        media_type="image/x-icon",
+        headers={"Cache-Control": "public, max-age=31536000"}
+    )
 
 # Add robots.txt endpoint
 @app.get('/robots.txt')
 async def robots():
-    return "User-agent: *\nAllow: /"
+    from fastapi.responses import Response
+    return Response(
+        content="User-agent: *\nAllow: /",
+        media_type="text/plain",
+        headers={"Cache-Control": "public, max-age=86400"}
+    )
 
 # Add sitemap.xml endpoint
 @app.get('/sitemap.xml')
 async def sitemap():
-    return """<?xml version="1.0" encoding="UTF-8"?>
+    from fastapi.responses import Response
+    content = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>/</loc>
@@ -165,6 +182,11 @@ async def sitemap():
         <priority>0.8</priority>
     </url>
 </urlset>"""
+    return Response(
+        content=content,
+        media_type="application/xml",
+        headers={"Cache-Control": "public, max-age=86400"}
+    )
 
 # Add manifest.json endpoint
 @app.get('/manifest.json')
@@ -183,8 +205,8 @@ async def manifest():
 @app.get('/styles.css')
 async def styles_css(request: Request):
     print(f"CSS requested: {request.url}")
-    # Return a basic CSS to prevent 404
-    return """/* Basic CSS fallback */
+    from fastapi.responses import Response
+    css_content = """/* Basic CSS fallback */
 body { 
     font-family: Arial, sans-serif; 
     background: #1a1a1a; 
@@ -206,17 +228,27 @@ body {
     margin: 0; 
 }
 """
+    return Response(
+        content=css_content,
+        media_type="text/css",
+        headers={"Cache-Control": "public, max-age=3600"}
+    )
 
 @app.get('/script.js')
 async def script_js(request: Request):
     print(f"JS requested: {request.url}")
-    # Return a basic JS to prevent 404
-    return """// Basic JS fallback
+    from fastapi.responses import Response
+    js_content = """// Basic JS fallback
 console.log('Crusont API - Basic script loaded');
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded');
 });
 """
+    return Response(
+        content=js_content,
+        media_type="application/javascript",
+        headers={"Cache-Control": "public, max-age=3600"}
+    )
 
 # Add health check endpoint
 @app.get('/health')
