@@ -10,16 +10,51 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="logo">⚔️ Crusont API</h1>
-            <p class="tagline">Multi-Provider AI Gateway</p>
+            <div class="header-content">
+                <h1 class="logo">⚔️ Crusont API</h1>
+                <p class="tagline">Multi-Provider AI Gateway</p>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">10B+</span>
+                        <span class="stat-label">Requests</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">99.9%</span>
+                        <span class="stat-label">Uptime</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">Keys</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-decoration">
+                <div class="sword-decoration">⚔️</div>
+                <div class="shield-decoration">🛡️</div>
+                <div class="crown-decoration">👑</div>
+            </div>
         </header>
 
         <main class="main">
             <div class="auth-section">
-                <h2>🔑 Authentication</h2>
+                <div class="auth-header">
+                    <h2>🔑 Authentication</h2>
+                    <div class="auth-tips">
+                        <div class="tip">
+                            <span class="tip-icon">💡</span>
+                            <span>Get your API key from Discord or create one below</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="auth-form">
-                    <input type="text" id="apiKey" placeholder="Enter your API key to manage keys..." class="input">
-                    <button id="authBtn" class="btn btn-primary">Authenticate</button>
+                    <div class="input-group">
+                        <input type="text" id="apiKey" placeholder="Enter your API key to manage keys..." class="input">
+                        <div class="input-decoration">🔐</div>
+                    </div>
+                    <button id="authBtn" class="btn btn-primary">
+                        <span class="btn-text">Authenticate</span>
+                        <span class="btn-icon">⚡</span>
+                    </button>
                 </div>
                 <div id="authStatus" class="status"></div>
             </div>
@@ -32,8 +67,33 @@
 
                 <div class="keys-section">
                     <div class="keys-header">
-                        <h3>🗝️ API Keys</h3>
-                        <button id="createKeyBtn" class="btn btn-success">+ Create New Key</button>
+                        <div class="keys-title">
+                            <h3>🗝️ API Keys</h3>
+                            <div class="keys-subtitle">Manage your API keys for different applications</div>
+                        </div>
+                        <button id="createKeyBtn" class="btn btn-success">
+                            <span class="btn-text">+ Create New Key</span>
+                            <span class="btn-icon">✨</span>
+                        </button>
+                    </div>
+                    
+                    <div class="keys-filters">
+                        <div class="filter-group">
+                            <label>Sort by:</label>
+                            <select id="sortKeys" class="filter-select">
+                                <option value="name">Name</option>
+                                <option value="created">Created Date</option>
+                                <option value="last_used">Last Used</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Show:</label>
+                            <select id="filterKeys" class="filter-select">
+                                <option value="all">All Keys</option>
+                                <option value="active">Active Only</option>
+                                <option value="unused">Unused Only</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div id="keysList" class="keys-list"></div>

@@ -27,12 +27,34 @@ class CrusontAPI {
         document.getElementById('closeNewKey').addEventListener('click', () => this.hideNewKeyModal());
         document.getElementById('copyKey').addEventListener('click', () => this.copyApiKey());
 
+        // Filtering and sorting
+        document.getElementById('sortKeys').addEventListener('change', () => this.renderApiKeys());
+        document.getElementById('filterKeys').addEventListener('change', () => this.renderApiKeys());
+
         // Close modals on outside click
         document.getElementById('createKeyModal').addEventListener('click', (e) => {
             if (e.target.id === 'createKeyModal') this.hideCreateKeyModal();
         });
         document.getElementById('newKeyModal').addEventListener('click', (e) => {
             if (e.target.id === 'newKeyModal') this.hideNewKeyModal();
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'k':
+                        e.preventDefault();
+                        document.getElementById('apiKey').focus();
+                        break;
+                    case 'n':
+                        e.preventDefault();
+                        if (!document.getElementById('dashboard').classList.contains('hidden')) {
+                            this.showCreateKeyModal();
+                        }
+                        break;
+                }
+            }
         });
     }
 
@@ -129,28 +151,93 @@ class CrusontAPI {
         if (this.apiKeys.length === 0) {
             keysList.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #888;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🗝️</div>
                     <p>No API keys found. Create your first key to get started!</p>
+                    <button class="btn btn-primary" onclick="crusontAPI.showCreateKeyModal()" style="margin-top: 15px;">
+                        <span class="btn-text">Create Your First Key</span>
+                        <span class="btn-icon">✨</span>
+                    </button>
                 </div>
             `;
             return;
         }
 
-        keysList.innerHTML = this.apiKeys.map(key => `
-            <div class="key-item">
+        // Apply filtering and sorting
+        let filteredKeys = this.getFilteredKeys();
+        let sortedKeys = this.getSortedKeys(filteredKeys);
+
+        keysList.innerHTML = sortedKeys.map(key => `
+            <div class="key-item" data-key-id="${key.id}">
                 <div class="key-info">
                     <div class="key-name">${this.escapeHtml(key.name)}</div>
                     <div class="key-value">${key.key}</div>
                     <div class="key-meta">
-                        Created: ${new Date(key.created_at * 1000).toLocaleDateString()}
-                        ${key.last_used ? ` | Last used: ${new Date(key.last_used * 1000).toLocaleDateString()}` : ' | Never used'}
+                        <span class="meta-item">
+                            <span class="meta-icon">📅</span>
+                            Created: ${new Date(key.created_at * 1000).toLocaleDateString()}
+                        </span>
+                        <span class="meta-item">
+                            <span class="meta-icon">${key.last_used ? '🕒' : '⏸️'}</span>
+                            ${key.last_used ? `Last used: ${new Date(key.last_used * 1000).toLocaleDateString()}` : 'Never used'}
+                        </span>
                     </div>
                 </div>
                 <div class="key-actions">
-                    <button class="btn btn-small" onclick="crusontAPI.copyToClipboard('${key.key}')">📋 Copy</button>
-                    <button class="btn btn-small btn-danger" onclick="crusontAPI.deleteApiKey('${key.id}')">🗑️ Delete</button>
+                    <button class="btn btn-small" onclick="crusontAPI.copyToClipboard('${key.key}')" title="Copy API Key">
+                        <span class="btn-text">📋 Copy</span>
+                    </button>
+                    <button class="btn btn-small btn-danger" onclick="crusontAPI.deleteApiKey('${key.id}')" title="Delete API Key">
+                        <span class="btn-text">🗑️ Delete</span>
+                    </button>
                 </div>
             </div>
         `).join('');
+
+        // Add animation to key items
+        setTimeout(() => {
+            const keyItems = keysList.querySelectorAll('.key-item');
+            keyItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }, 50);
+    }
+
+    getFilteredKeys() {
+        const filter = document.getElementById('filterKeys').value;
+        
+        switch(filter) {
+            case 'active':
+                return this.apiKeys.filter(key => key.last_used);
+            case 'unused':
+                return this.apiKeys.filter(key => !key.last_used);
+            default:
+                return this.apiKeys;
+        }
+    }
+
+    getSortedKeys(keys) {
+        const sortBy = document.getElementById('sortKeys').value;
+        
+        return [...keys].sort((a, b) => {
+            switch(sortBy) {
+                case 'name':
+                    return a.name.localeCompare(b.name);
+                case 'created':
+                    return b.created_at - a.created_at;
+                case 'last_used':
+                    const aUsed = a.last_used || 0;
+                    const bUsed = b.last_used || 0;
+                    return bUsed - aUsed;
+                default:
+                    return 0;
+            }
+        });
     }
 
     showCreateKeyModal() {
