@@ -1,21 +1,15 @@
 import traceback
-from fastapi import (
-    APIRouter,
-    Request,
-    Response,
-    UploadFile,
-    File,
-    Form,
-    HTTPException
-)
-from ....constants import DEPENDENCIES
-from .....core import ProviderManager
-from .....providers import Model, BaseProvider
-from ....exceptions import InsufficientCreditsError, NoProviderAvailableError
+from fastapi import APIRouter, Request, HTTPException
+from ....responses import PrettyJSONResponse
+from ...constants import DEPENDENCIES
+from ....models import TextTranslationsRequest
+from ....core import ProviderManager
+from ....providers import Model, BaseProvider
+from ...exceptions import InsufficientCreditsError, NoProviderAvailableError
 
 router = APIRouter()
 
-class UpscaleHandler:
+class TextHandler:
     provider_manager = ProviderManager()
 
     @classmethod
@@ -41,21 +35,19 @@ class UpscaleHandler:
         model_instance = Model.get_model(model)
         return model_instance.pricing.price
 
-@router.post('', dependencies=DEPENDENCIES, response_model=None)
-async def upscale(
+@router.post('/translations', dependencies=DEPENDENCIES, response_model=None)
+async def text_translations(
     request: Request,
-    model: str = Form(...),
-    file: UploadFile = File(...)
-) -> Response:
+    data: TextTranslationsRequest
+) -> PrettyJSONResponse:
+    """Translate text from one language to another"""
     try:
-        provider = await UpscaleHandler._get_provider(model)
+        provider = await TextHandler._get_provider(data.model)
         provider_instance = BaseProvider.get_provider_class(provider['name'])
         
-        token_count = UpscaleHandler._get_token_count(
-            model
-        )
+        token_count = TextHandler._get_token_count(data.model)
 
-        UpscaleHandler._validate_credits(
+        TextHandler._validate_credits(
             available_credits=request.state.user['credits'],
             required_tokens=token_count
         )
@@ -63,9 +55,9 @@ async def upscale(
         request.state.provider = provider
         request.state.provider_name = provider['name']
 
-        return await provider_instance.upscale(
+        return await provider_instance.text_translations(
             request,
-            file
+            **data.model_dump(mode='json', exclude={'model'})
         )
 
     except (InsufficientCreditsError, NoProviderAvailableError) as e:
@@ -76,6 +68,7 @@ async def upscale(
     except HTTPException:
         raise
     except Exception:
+        traceback.print_exc()
         raise HTTPException(
             status_code=500,
             detail=traceback.format_exc()

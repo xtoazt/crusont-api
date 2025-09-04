@@ -14,7 +14,7 @@ class AuthenticationHandler:
                 detail=(
                     'No API key was provided in the request. '
                     'Please include your API key in the Authorization header as "Bearer <your_key>". '
-                    'If you don\'t have an API key, get one at: https://discord.gg/zukijourney'
+                    'If you don\'t have an API key, get one at: https://discord.gg/crusont'
                 ),
                 status_code=401
             )
@@ -28,7 +28,7 @@ class AuthenticationHandler:
                 detail=(
                     'The provided API key was not found in our system. '
                     'Please check that you entered it correctly. '
-                    'If you need a valid API key, get one at: https://discord.gg/zukijourney'
+                    'If you need a valid API key, get one at: https://discord.gg/crusont'
                 ),
                 status_code=401
             )
@@ -38,10 +38,13 @@ class AuthenticationHandler:
                 detail=(
                     'Your API key has been banned from accessing the service. '
                     'This may be due to violation of our terms of service, abuse, leaving the server, etc. '
-                    'To appeal your ban, please visit: https://discord.gg/zukijourney'
+                    'To appeal your ban, please visit: https://discord.gg/crusont'
                 ),
                 status_code=403
             )
+        
+        # Update last used timestamp for the API key
+        await cls.user_manager.update_api_key_last_used(key)
         
         return user
 
@@ -69,7 +72,7 @@ class UserAccessHandler:
                         'IP address mismatch detected. For security reasons, free tier accounts '
                         'are limited to one IP address. Your current IP address does not match '
                         'the one registered to your account. To reset your IP lock with "/user resetip" in the server, or upgrade '
-                        'to premium for multi-IP support, please visit: http://discord.gg/zukijourney'
+                        'to premium for multi-IP support, please visit: http://discord.gg/crusont'
                     ),
                     status_code=403
                 )
@@ -110,7 +113,7 @@ class RequestValidator:
             raise HTTPException(
                 detail=(
                     f'The model `{model}` does not exist. Please check our model documentation at '
-                    'https://docs.zukijourney.com/models for a list of available models.'
+                    'https://docs.crusont.com/models for a list of available models.'
                 ),
                 status_code=400
             )
@@ -126,7 +129,7 @@ class RequestValidator:
                 detail=(
                     f'The model `{model}` cannot be used with this endpoint ({endpoint}). '
                     f'This model should be used with {model_instance.endpoint} instead. '
-                    'Please check our documentation at https://docs.zukijourney.com/models '
+                    'Please check our documentation at https://docs.crusont.com/models '
                     'for proper model usage.'
                 )
             )
@@ -136,7 +139,7 @@ class RequestValidator:
                 raise HTTPException(
                     detail=(
                         f'The voice `{voice}` is not available for this model. '
-                        'Please check our documentation at https://docs.zukijourney.com/models '
+                        'Please check our documentation at https://docs.crusont.com/models '
                         'for a list of supported voices.'
                     ),
                     status_code=400
@@ -154,7 +157,7 @@ class RequestValidator:
                     f'Access denied for model `{model}`. This model is '
                     f'{"early access only (requires Subscriber tier or higher)" if model_instance.is_early_access else "not available for free users"}. '
                     'To upgrade your account or learn more about our tiers, please visit our Discord server: '
-                    'discord.gg/zukijourney'
+                    'discord.gg/crusont'
                 )
             )
 

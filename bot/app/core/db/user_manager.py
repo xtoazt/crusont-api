@@ -15,6 +15,7 @@ class UserDatabase:
     def __init__(self):
         self.client = AsyncIOMotorClient(settings.db_url)
         self.collection = self.client['db']['users']
+        self.api_keys_collection = self.client['db']['api_keys']
 
 class UserManager:
     def __init__(self):
@@ -61,7 +62,6 @@ class UserManager:
         try:
             insert_data = {
                 'user_id': str(id),
-                'key': f'zu-{secrets.token_hex(16)}',
                 'premium_tier': 0,
                 'banned': False,
                 'credits': self._credits_config[0],
@@ -70,9 +70,30 @@ class UserManager:
                 'ip': None
             }
             await self._db.collection.insert_one(insert_data)
+            
+            # Create a default API key for the user
+            await self.create_default_api_key(str(id))
+            
             return insert_data
         except Exception as e:
             raise DatabaseError(f'Failed to insert user: {str(e)}')
+
+    async def create_default_api_key(self, user_id: str) -> str:
+        """Create a default API key for a new user"""
+        try:
+            key = f'cr-{secrets.token_hex(16)}'
+            api_key_doc = {
+                'user_id': user_id,
+                'key': key,
+                'name': 'Default Key',
+                'created_at': time.time(),
+                'last_used': None,
+                'is_active': True
+            }
+            await self._db.api_keys_collection.insert_one(api_key_doc)
+            return key
+        except Exception as e:
+            raise DatabaseError(f'Failed to create default API key: {str(e)}')
 
     async def delete_user(self, user_id: str) -> None:
         try:

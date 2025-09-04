@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crusont API - Key Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">⚔️ Crusont API</h1>
+            <p class="tagline">Multi-Provider AI Gateway</p>
+        </header>
+
+        <main class="main">
+            <div class="auth-section">
+                <h2>🔑 Authentication</h2>
+                <div class="auth-form">
+                    <input type="text" id="apiKey" placeholder="Enter your API key to manage keys..." class="input">
+                    <button id="authBtn" class="btn btn-primary">Authenticate</button>
+                </div>
+                <div id="authStatus" class="status"></div>
+            </div>
+
+            <div id="dashboard" class="dashboard hidden">
+                <div class="user-info">
+                    <h3>👤 User Information</h3>
+                    <div id="userDetails" class="user-details"></div>
+                </div>
+
+                <div class="keys-section">
+                    <div class="keys-header">
+                        <h3>🗝️ API Keys</h3>
+                        <button id="createKeyBtn" class="btn btn-success">+ Create New Key</button>
+                    </div>
+                    
+                    <div id="keysList" class="keys-list"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2025 Crusont API. Built with open-source principles.</p>
+            <div class="links">
+                <a href="https://docs.crusont.com" target="_blank">📚 Documentation</a>
+                <a href="https://discord.gg/crusont" target="_blank">💬 Discord</a>
+                <a href="https://github.com/crusont" target="_blank">🐙 GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Create Key Modal -->
+    <div id="createKeyModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New API Key</h3>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="keyName" placeholder="Key name (e.g., 'Production App')" class="input">
+                <div class="modal-actions">
+                    <button id="cancelCreate" class="btn btn-secondary">Cancel</button>
+                    <button id="confirmCreate" class="btn btn-success">Create Key</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Key Display Modal -->
+    <div id="newKeyModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎉 New API Key Created!</h3>
+                <button id="closeNewKeyModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="key-display">
+                    <p><strong>Key Name:</strong> <span id="newKeyName"></span></p>
+                    <p><strong>API Key:</strong></p>
+                    <div class="key-value">
+                        <code id="newKeyValue"></code>
+                        <button id="copyKey" class="btn btn-small">📋 Copy</button>
+                    </div>
+                    <div class="warning">
+                        ⚠️ <strong>Important:</strong> Store this key securely. It will not be shown again!
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="closeNewKey" class="btn btn-primary">Got it!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

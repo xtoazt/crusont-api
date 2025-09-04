@@ -1,0 +1,468 @@
+/* Rustic, minimal design with a medieval/tech aesthetic */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier Prime', monospace;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #e0e0e0;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px;
+    border: 2px solid #8B4513;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #2d2d2d, #3d3d3d);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.logo {
+    font-size: 2.5rem;
+    color: #DAA520;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+}
+
+.tagline {
+    color: #B8860B;
+    font-size: 1.1rem;
+    font-style: italic;
+}
+
+/* Main Content */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Auth Section */
+.auth-section {
+    background: #2d2d2d;
+    border: 1px solid #8B4513;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.auth-section h2 {
+    color: #DAA520;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.auth-form {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Input Styles */
+.input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 2px solid #8B4513;
+    border-radius: 5px;
+    background: #1a1a1a;
+    color: #e0e0e0;
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #DAA520;
+    box-shadow: 0 0 10px rgba(218, 165, 32, 0.3);
+}
+
+.input::placeholder {
+    color: #888;
+}
+
+/* Button Styles */
+.btn {
+    padding: 12px 20px;
+    border: 2px solid;
+    border-radius: 5px;
+    background: transparent;
+    color: #e0e0e0;
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary {
+    border-color: #DAA520;
+    color: #DAA520;
+}
+
+.btn-primary:hover {
+    background: #DAA520;
+    color: #1a1a1a;
+}
+
+.btn-success {
+    border-color: #228B22;
+    color: #228B22;
+}
+
+.btn-success:hover {
+    background: #228B22;
+    color: #1a1a1a;
+}
+
+.btn-danger {
+    border-color: #DC143C;
+    color: #DC143C;
+}
+
+.btn-danger:hover {
+    background: #DC143C;
+    color: #1a1a1a;
+}
+
+.btn-secondary {
+    border-color: #888;
+    color: #888;
+}
+
+.btn-secondary:hover {
+    background: #888;
+    color: #1a1a1a;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* Status */
+.status {
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.status.success {
+    background: rgba(34, 139, 34, 0.2);
+    border: 1px solid #228B22;
+    color: #90EE90;
+}
+
+.status.error {
+    background: rgba(220, 20, 60, 0.2);
+    border: 1px solid #DC143C;
+    color: #FFB6C1;
+}
+
+/* Dashboard */
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.user-info, .keys-section {
+    background: #2d2d2d;
+    border: 1px solid #8B4513;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.user-info h3, .keys-section h3 {
+    color: #DAA520;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.user-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.user-detail {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 4px solid #DAA520;
+}
+
+.user-detail strong {
+    color: #DAA520;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Keys Section */
+.keys-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.keys-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.key-item {
+    background: #1a1a1a;
+    border: 1px solid #8B4513;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.key-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.key-name {
+    color: #DAA520;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.key-value {
+    font-family: 'Courier Prime', monospace;
+    background: #2d2d2d;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    color: #B8860B;
+    font-size: 12px;
+    word-break: break-all;
+    margin-bottom: 8px;
+}
+
+.key-meta {
+    font-size: 12px;
+    color: #888;
+}
+
+.key-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #2d2d2d;
+    border: 2px solid #8B4513;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #8B4513;
+}
+
+.modal-header h3 {
+    color: #DAA520;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    color: #DAA520;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.key-display {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #8B4513;
+}
+
+.key-display p {
+    margin-bottom: 15px;
+}
+
+.key-display strong {
+    color: #DAA520;
+}
+
+.key-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #2d2d2d;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    margin: 10px 0;
+}
+
+.key-value code {
+    flex: 1;
+    color: #B8860B;
+    font-family: 'Courier Prime', monospace;
+    word-break: break-all;
+    font-size: 12px;
+}
+
+.warning {
+    background: rgba(255, 165, 0, 0.1);
+    border: 1px solid #FFA500;
+    border-radius: 5px;
+    padding: 15px;
+    color: #FFA500;
+    margin-top: 15px;
+}
+
+/* Footer */
+.footer {
+    margin-top: 40px;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #8B4513;
+    color: #888;
+}
+
+.links {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.links a {
+    color: #B8860B;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.links a:hover {
+    color: #DAA520;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .logo {
+        font-size: 2rem;
+    }
+    
+    .auth-form {
+        flex-direction: column;
+    }
+    
+    .keys-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .key-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .key-actions {
+        justify-content: center;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .links {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
