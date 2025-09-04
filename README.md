@@ -1,6 +1,6 @@
 # ⚔️ Crusont API
 
-A powerful multi-provider AI gateway with multiple API key support, rustic UI, and comprehensive documentation.
+A powerful multi-provider AI gateway that's **completely free and open**. No restrictions, no limits, no premium tiers - just pure open access to AI technology.
 
 ## 🚀 Features
 
@@ -21,12 +21,20 @@ A powerful multi-provider AI gateway with multiple API key support, rustic UI, a
 - Automatic provider failover
 - Unified API interface
 - Real-time provider health monitoring
+- **All models completely free and accessible**
 
 ### 📚 Comprehensive Documentation
 - Complete API reference
 - Code examples in multiple languages
 - Interactive documentation site
 - FAQ and troubleshooting guides
+
+### 🆓 Completely Free & Open
+- **No IP locks or restrictions**
+- **No rate limits or usage caps**
+- **No premium tiers or paid features**
+- **All models free and accessible**
+- **Open source and community-driven**
 
 ## 🏗️ Architecture
 
@@ -101,16 +109,18 @@ print(response.choices[0].message.content)
 - Create multiple keys for different applications
 - Track usage and manage access
 
-## 💰 Pricing Tiers
+## 🆓 Completely Free Access
 
-| Tier | Price | Tokens/Day | Messages/Day | IP Policy |
-|------|-------|------------|--------------|-----------|
-| Member | Free | 42,069 | ~200 | IP-Locked |
-| Donator/Booster | $5 one-time | 300,000 | ~600 | IP-Locked |
-| Contributor | Community | 325,000 | ~650 | IP-Locked |
-| Subscriber | $10/month | 750,000 | ~1,200 | IP-Free |
-| Premium | $25/month | 3,000,000 | ~4,000 | IP-Free |
-| Enterprise | $50/month | 7,000,000 | ~10,000 | IP-Free |
+**No pricing tiers, no restrictions, no limits!**
+
+- ✅ **Unlimited usage** - Use as much as you need
+- ✅ **All models free** - Access to every AI model
+- ✅ **No IP locks** - Use from anywhere in the world
+- ✅ **No rate limits** - No throttling or caps
+- ✅ **Multiple API keys** - Create unlimited keys
+- ✅ **Open source** - Fully transparent and community-driven
+
+**Everything is free, forever. No hidden costs, no premium features, no restrictions.**
 
 ## 🛠️ Development
 

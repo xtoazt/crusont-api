@@ -33,11 +33,8 @@ class AudioHandler:
         available_credits: int,
         required_tokens: int
     ) -> None:
-        if required_tokens > available_credits:
-            raise InsufficientCreditsError(
-                available_credits=available_credits,
-                required_tokens=required_tokens
-            )
+        # Credit validation removed - API is now fully free
+        pass
 
     @staticmethod
     def _get_token_count(model: str) -> int:
@@ -56,10 +53,7 @@ async def audio_speech(
         
         token_count = AudioHandler._get_token_count(data.model)
 
-        AudioHandler._validate_credits(
-            available_credits=request.state.user['credits'],
-            required_tokens=token_count
-        )
+        # Credit validation removed - API is now fully free
 
         request.state.provider = provider
         request.state.provider_name = provider['name']
@@ -95,10 +89,7 @@ async def audio_transcriptions(
         
         token_count = AudioHandler._get_token_count(model=model)
 
-        AudioHandler._validate_credits(
-            available_credits=request.state.user['credits'],
-            required_tokens=token_count
-        )
+        # Credit validation removed - API is now fully free
 
         request.state.provider = provider
         request.state.provider_name = provider['name']
@@ -134,10 +125,7 @@ async def audio_translations(
 
         token_count = AudioHandler._get_token_count(model=model)
 
-        AudioHandler._validate_credits(
-            available_credits=request.state.user['credits'],
-            required_tokens=token_count
-        )
+        # Credit validation removed - API is now fully free
 
         provider_instance = BaseProvider.get_provider_class(provider['name'])
 

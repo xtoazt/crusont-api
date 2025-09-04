@@ -27,11 +27,8 @@ class ChatCompletionsHandler:
 
     @staticmethod
     def _validate_credits(available_credits: int, required_tokens: int) -> None:
-        if required_tokens > available_credits:
-            raise InsufficientCreditsError(
-                available_credits=available_credits,
-                required_tokens=required_tokens
-            )
+        # Credit validation removed - API is now fully free
+        pass
 
     @classmethod
     async def _get_provider(
@@ -64,13 +61,11 @@ async def chat_completions(
     try:
         token_count = request_processor.count_tokens(data)
         
-        ChatCompletionsHandler._validate_credits(
-            available_credits=request.state.user['credits'],
-            required_tokens=token_count
-        )
+        # Credit validation removed - API is now fully free
         request.state.token_count = token_count
 
-        if data.provider_name and request.state.user.get('premium_tier', 0) == 5:
+        # Provider selection is now open to all users
+        if data.provider_name:
             provider = await ChatCompletionsHandler._get_provider(
                 model=data.model,
                 name=data.provider_name

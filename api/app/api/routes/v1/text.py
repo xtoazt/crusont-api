@@ -24,11 +24,8 @@ class TextHandler:
         available_credits: int,
         required_tokens: int
     ) -> None:
-        if required_tokens > available_credits:
-            raise InsufficientCreditsError(
-                available_credits=available_credits,
-                required_tokens=required_tokens
-            )
+        # Credit validation removed - API is now fully free
+        pass
 
     @staticmethod
     def _get_token_count(model: str) -> int:
@@ -47,10 +44,7 @@ async def text_translations(
         
         token_count = TextHandler._get_token_count(data.model)
 
-        TextHandler._validate_credits(
-            available_credits=request.state.user['credits'],
-            required_tokens=token_count
-        )
+        # Credit validation removed - API is now fully free
 
         request.state.provider = provider
         request.state.provider_name = provider['name']

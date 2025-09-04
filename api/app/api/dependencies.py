@@ -53,29 +53,13 @@ class UserAccessHandler:
 
     @classmethod
     async def _check_premium_status(cls, user: dict) -> None:
-        if user['premium_tier'] > 1 and time.time() > user['premium_expiry']:
-            user['premium_tier'] = 1
-            await cls.user_manager.update_user(user['user_id'], {'premium_tier': 0})
+        # Premium status checking removed - API is now fully free
+        pass
 
     @classmethod
     async def _validate_ip(cls, request: Request, user: dict) -> None:
-        if user['premium_tier'] < 2:
-            current_ip = request.headers.get('CF-Connecting-IP')
-
-            if not user['ip']:
-                user['ip'] = current_ip
-                await cls.user_manager.update_user(user['user_id'], {'ip': current_ip})
-            
-            if user['ip'] != current_ip:
-                raise HTTPException(
-                    detail=(
-                        'IP address mismatch detected. For security reasons, free tier accounts '
-                        'are limited to one IP address. Your current IP address does not match '
-                        'the one registered to your account. To reset your IP lock with "/user resetip" in the server, or upgrade '
-                        'to premium for multi-IP support, please visit: http://discord.gg/crusont'
-                    ),
-                    status_code=403
-                )
+        # IP validation removed - API is now fully open and free
+        pass
 
 class RequestValidator:
     @staticmethod
@@ -145,21 +129,8 @@ class RequestValidator:
                     status_code=400
                 )
 
-        is_access_denied = (
-            (not model_instance.is_free and user_tier == 0) or
-            (model_instance.is_early_access and user_tier < 2)
-        )
-        
-        if is_access_denied:
-            raise HTTPException(
-                status_code=403,
-                detail=(
-                    f'Access denied for model `{model}`. This model is '
-                    f'{"early access only (requires Subscriber tier or higher)" if model_instance.is_early_access else "not available for free users"}. '
-                    'To upgrade your account or learn more about our tiers, please visit our Discord server: '
-                    'discord.gg/crusont'
-                )
-            )
+        # All models are now free and accessible - no restrictions
+        pass
 
 async def authentication(request: Request) -> None:
     key = await AuthenticationHandler._get_api_key(
