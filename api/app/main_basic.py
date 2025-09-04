@@ -46,7 +46,14 @@ async def home() -> Dict[str, Any]:
         'features': [
             'Chat completions',
             'No restrictions or limits'
-        ]
+        ],
+        'endpoints': {
+            'models': '/v1/models',
+            'chat': '/v1/chat/completions',
+            'health': '/health',
+            'docs': '/docs/',
+            'frontend': '/'
+        }
     }
 
 # Models endpoint
@@ -66,6 +73,24 @@ async def models() -> Dict[str, Any]:
                 'object': 'model',
                 'created': 1677610602,
                 'owned_by': 'openai'
+            },
+            {
+                'id': 'gpt-4-turbo',
+                'object': 'model',
+                'created': 1677610602,
+                'owned_by': 'openai'
+            },
+            {
+                'id': 'claude-3-sonnet',
+                'object': 'model',
+                'created': 1677610602,
+                'owned_by': 'anthropic'
+            },
+            {
+                'id': 'claude-3-opus',
+                'object': 'model',
+                'created': 1677610602,
+                'owned_by': 'anthropic'
             }
         ]
     }
@@ -116,6 +141,11 @@ async def api_models() -> Dict[str, Any]:
 @app.get('/favicon.ico')
 async def favicon():
     return {"message": "No favicon available"}
+
+# Add robots.txt endpoint
+@app.get('/robots.txt')
+async def robots():
+    return "User-agent: *\nAllow: /"
 
 # Add health check endpoint
 @app.get('/health')
