@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Page</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #1a1a1a; 
+            color: #fff; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        .test-result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            border: 1px solid #333; 
+            border-radius: 5px; 
+        }
+        .success { 
+            background: #2d5a2d; 
+            border-color: #4a7c4a; 
+        }
+        .error { 
+            background: #5a2d2d; 
+            border-color: #7c4a4a; 
+        }
+        button { 
+            background: #DAA520; 
+            color: #000; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 5px; 
+        }
+        button:hover { 
+            background: #B8860B; 
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Crusont API Test Page</h1>
+    <p>This page tests all API endpoints to identify any issues.</p>
+    
+    <div id="results"></div>
+    
+    <button onclick="testAllEndpoints()">Test All Endpoints</button>
+    <button onclick="clearResults()">Clear Results</button>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        function addResult(endpoint, success, data, error) {
+            const div = document.createElement('div');
+            div.className = `test-result ${success ? 'success' : 'error'}`;
+            div.innerHTML = `
+                <strong>${endpoint}</strong> - ${success ? '✅ SUCCESS' : '❌ ERROR'}<br>
+                ${success ? `Data: ${JSON.stringify(data, null, 2)}` : `Error: ${error}`}
+            `;
+            resultsDiv.appendChild(div);
+        }
+        
+        async function testEndpoint(endpoint) {
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                addResult(endpoint, response.ok, data, null);
+            } catch (error) {
+                addResult(endpoint, false, null, error.message);
+            }
+        }
+        
+        async function testAllEndpoints() {
+            clearResults();
+            
+            const endpoints = [
+                '/',
+                '/health',
+                '/test',
+                '/v1/models',
+                '/favicon.ico',
+                '/robots.txt',
+                '/sitemap.xml',
+                '/manifest.json',
+                '/styles.css',
+                '/script.js'
+            ];
+            
+            for (const endpoint of endpoints) {
+                await testEndpoint(endpoint);
+                await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
+            }
+        }
+        
+        function clearResults() {
+            resultsDiv.innerHTML = '';
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            console.log('Test page loaded, starting auto-test...');
+            testAllEndpoints();
+        });
+    </script>
+</body>
+</html>

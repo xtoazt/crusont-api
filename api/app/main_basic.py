@@ -38,7 +38,8 @@ class ChatRequest(BaseModel):
 
 # Root endpoint
 @app.get('/')
-async def home() -> Dict[str, Any]:
+async def home(request: Request) -> Dict[str, Any]:
+    print(f"Root endpoint accessed: {request.url}")
     return {
         'message': 'Welcome to the Crusont API! Basic free AI gateway.',
         'version': '1.0.0',
@@ -139,7 +140,8 @@ async def api_models() -> Dict[str, Any]:
 
 # Add favicon endpoint to prevent 404
 @app.get('/favicon.ico')
-async def favicon():
+async def favicon(request: Request):
+    print(f"Favicon requested: {request.url}")
     return {"message": "No favicon available"}
 
 # Add robots.txt endpoint
@@ -177,20 +179,77 @@ async def manifest():
         "background_color": "#1a1a1a"
     }
 
-# Static files (styles.css, script.js) should be served by Vercel static build
+# Static file endpoints as fallback
+@app.get('/styles.css')
+async def styles_css(request: Request):
+    print(f"CSS requested: {request.url}")
+    # Return a basic CSS to prevent 404
+    return """/* Basic CSS fallback */
+body { 
+    font-family: Arial, sans-serif; 
+    background: #1a1a1a; 
+    color: #fff; 
+    margin: 0; 
+    padding: 20px; 
+}
+.container { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
+.header { 
+    text-align: center; 
+    margin-bottom: 40px; 
+}
+.logo { 
+    color: #DAA520; 
+    font-size: 2.5em; 
+    margin: 0; 
+}
+"""
+
+@app.get('/script.js')
+async def script_js(request: Request):
+    print(f"JS requested: {request.url}")
+    # Return a basic JS to prevent 404
+    return """// Basic JS fallback
+console.log('Crusont API - Basic script loaded');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded');
+});
+"""
 
 # Add health check endpoint
 @app.get('/health')
 async def health():
     return {"status": "healthy", "message": "Crusont API is running"}
 
+# Add test endpoint
+@app.get('/test')
+async def test():
+    return {
+        "status": "success",
+        "message": "API is working correctly",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "endpoints_tested": [
+            "/",
+            "/v1/models",
+            "/health",
+            "/test"
+        ]
+    }
+
 # Add catch-all for any other routes
 @app.get('/{path:path}')
-async def catch_all(path: str):
-    print(f"404 - Requested path: {path}")  # Debug logging
+async def catch_all(path: str, request: Request):
+    print(f"404 - Requested path: {path}")
+    print(f"404 - Request method: {request.method}")
+    print(f"404 - Request headers: {dict(request.headers)}")
+    print(f"404 - Request URL: {request.url}")
     return {
         "error": "Endpoint not found",
         "path": path,
+        "method": request.method,
+        "url": str(request.url),
         "message": "This endpoint is not available in the basic version",
         "available_endpoints": [
             "/",
@@ -200,6 +259,8 @@ async def catch_all(path: str):
             "/api/v1/models",
             "/health",
             "/favicon.ico",
-            "/robots.txt"
+            "/robots.txt",
+            "/sitemap.xml",
+            "/manifest.json"
         ]
     }
