@@ -111,3 +111,30 @@ async def api_home() -> Dict[str, Any]:
 @app.get('/api/v1/models')
 async def api_models() -> Dict[str, Any]:
     return await models()
+
+# Add favicon endpoint to prevent 404
+@app.get('/favicon.ico')
+async def favicon():
+    return {"message": "No favicon available"}
+
+# Add health check endpoint
+@app.get('/health')
+async def health():
+    return {"status": "healthy", "message": "Crusont API is running"}
+
+# Add catch-all for any other routes
+@app.get('/{path:path}')
+async def catch_all(path: str):
+    return {
+        "error": "Endpoint not found",
+        "path": path,
+        "message": "This endpoint is not available in the basic version",
+        "available_endpoints": [
+            "/",
+            "/v1/models", 
+            "/v1/chat/completions",
+            "/api/",
+            "/api/v1/models",
+            "/health"
+        ]
+    }
