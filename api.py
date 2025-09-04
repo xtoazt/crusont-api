@@ -160,8 +160,27 @@ async def proxy_to_openai(endpoint: str, data: Dict[str, Any], api_key: str) -> 
 async def root():
     """Serve the main frontend page"""
     try:
+        # Debug information
+        logger.info(f"Root endpoint called - Current working directory: {os.getcwd()}")
+        logger.info(f"API file location: {__file__}")
+        logger.info(f"API file directory: {os.path.dirname(__file__)}")
         # Read the frontend index.html file
-        frontend_path = os.path.join(os.path.dirname(__file__), "frontend", "index.html")
+        # Try multiple possible paths for Vercel deployment
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), "frontend", "index.html"),
+            os.path.join(os.getcwd(), "frontend", "index.html"),
+            "frontend/index.html",
+            "index.html"
+        ]
+        
+        frontend_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                frontend_path = path
+                break
+        
+        if not frontend_path:
+            raise FileNotFoundError("Frontend index.html not found")
         with open(frontend_path, 'r', encoding='utf-8') as f:
             content = f.read()
         return Response(
@@ -212,6 +231,16 @@ async def root():
 async def health():
     """Health check endpoint"""
     return {"status": "healthy", "message": "Crusont API is running"}
+
+# Simple test endpoint
+@app.get("/test")
+async def test():
+    """Simple test endpoint"""
+    return {
+        "message": "API is working!",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "version": "1.0.0"
+    }
 
 # Models endpoint
 @app.get("/v1/models")
@@ -609,7 +638,23 @@ async def list_api_keys():
 async def serve_styles():
     """Serve CSS file"""
     try:
-        css_path = os.path.join(os.path.dirname(__file__), "frontend", "styles.css")
+        # Try multiple possible paths for Vercel deployment
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), "frontend", "styles.css"),
+            os.path.join(os.getcwd(), "frontend", "styles.css"),
+            "frontend/styles.css",
+            "styles.css"
+        ]
+        
+        css_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                css_path = path
+                break
+        
+        if not css_path:
+            raise FileNotFoundError("CSS file not found")
+            
         with open(css_path, 'r', encoding='utf-8') as f:
             content = f.read()
         return Response(
@@ -627,7 +672,23 @@ async def serve_styles():
 async def serve_script():
     """Serve JavaScript file"""
     try:
-        js_path = os.path.join(os.path.dirname(__file__), "frontend", "script.js")
+        # Try multiple possible paths for Vercel deployment
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), "frontend", "script.js"),
+            os.path.join(os.getcwd(), "frontend", "script.js"),
+            "frontend/script.js",
+            "script.js"
+        ]
+        
+        js_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                js_path = path
+                break
+        
+        if not js_path:
+            raise FileNotFoundError("JS file not found")
+            
         with open(js_path, 'r', encoding='utf-8') as f:
             content = f.read()
         return Response(
@@ -645,7 +706,23 @@ async def serve_script():
 async def serve_favicon():
     """Serve favicon"""
     try:
-        favicon_path = os.path.join(os.path.dirname(__file__), "frontend", "favicon.ico")
+        # Try multiple possible paths for Vercel deployment
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), "frontend", "favicon.ico"),
+            os.path.join(os.getcwd(), "frontend", "favicon.ico"),
+            "frontend/favicon.ico",
+            "favicon.ico"
+        ]
+        
+        favicon_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                favicon_path = path
+                break
+        
+        if not favicon_path:
+            raise FileNotFoundError("Favicon file not found")
+            
         with open(favicon_path, 'rb') as f:
             content = f.read()
         return Response(
