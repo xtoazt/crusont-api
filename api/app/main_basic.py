@@ -139,13 +139,34 @@ async def api_models() -> Dict[str, Any]:
     return await models()
 
 # Serve frontend files
+@app.get('/')
+async def serve_root():
+    from fastapi.responses import Response
+    import os
+    
+    # Read the frontend index.html file
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'index.html')
+    try:
+        with open(frontend_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return Response(
+            content=content,
+            media_type="text/html",
+            headers={"Cache-Control": "public, max-age=3600"}
+        )
+    except FileNotFoundError:
+        return Response(
+            content="<h1>Frontend not found</h1>",
+            media_type="text/html"
+        )
+
 @app.get('/index.html')
 async def serve_index():
     from fastapi.responses import Response
     import os
     
     # Read the frontend index.html file
-    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'frontend', 'index.html')
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'index.html')
     try:
         with open(frontend_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -165,7 +186,7 @@ async def serve_styles():
     from fastapi.responses import Response
     import os
     
-    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'frontend', 'styles.css')
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'styles.css')
     try:
         with open(frontend_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -185,7 +206,7 @@ async def serve_script():
     from fastapi.responses import Response
     import os
     
-    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'frontend', 'script.js')
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'script.js')
     try:
         with open(frontend_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -205,7 +226,7 @@ async def serve_favicon():
     from fastapi.responses import Response
     import os
     
-    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'frontend', 'favicon.ico')
+    frontend_path = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'favicon.ico')
     try:
         with open(frontend_path, 'rb') as f:
             content = f.read()
