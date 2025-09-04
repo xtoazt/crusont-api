@@ -56,3 +56,25 @@ secrets/
 # Ignore lock files (Vercel will use requirements.txt)
 uv.lock
 pyproject.toml
+
+# Ignore most Python files to reduce serverless functions
+api/app/models/embeddings.py
+api/app/models/moderations.py
+api/app/models/audio.py
+api/app/models/images_generations.py
+api/app/models/text_translations.py
+api/app/core/db/exceptions.py
+api/app/providers/utils.py
+api/app/providers/ai_models.py
+api/app/providers/multiple/openai.py
+api/app/core/db/managers/provider_manager.py
+api/app/core/db/managers/user_manager.py
+api/app/core/db/managers/__init__.py
+api/app/core/db/__init__.py
+api/app/core/__init__.py
+api/app/core/config.py
+api/app/api/exceptions.py
+api/app/api/constants.py
+api/app/api/dependencies.py
+api/app/responses.py
+api/app/errors.py
