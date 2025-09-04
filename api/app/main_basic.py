@@ -147,6 +147,38 @@ async def favicon():
 async def robots():
     return "User-agent: *\nAllow: /"
 
+# Add sitemap.xml endpoint
+@app.get('/sitemap.xml')
+async def sitemap():
+    return """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>/</loc>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>/docs/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+</urlset>"""
+
+# Add manifest.json endpoint
+@app.get('/manifest.json')
+async def manifest():
+    return {
+        "name": "Crusont API",
+        "short_name": "Crusont",
+        "description": "Free and open AI gateway",
+        "start_url": "/",
+        "display": "standalone",
+        "theme_color": "#8B4513",
+        "background_color": "#1a1a1a"
+    }
+
+# Static files (styles.css, script.js) should be served by Vercel static build
+
 # Add health check endpoint
 @app.get('/health')
 async def health():
@@ -155,6 +187,7 @@ async def health():
 # Add catch-all for any other routes
 @app.get('/{path:path}')
 async def catch_all(path: str):
+    print(f"404 - Requested path: {path}")  # Debug logging
     return {
         "error": "Endpoint not found",
         "path": path,
@@ -165,6 +198,8 @@ async def catch_all(path: str):
             "/v1/chat/completions",
             "/api/",
             "/api/v1/models",
-            "/health"
+            "/health",
+            "/favicon.ico",
+            "/robots.txt"
         ]
     }
